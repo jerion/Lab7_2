@@ -1,6 +1,7 @@
 package com.example.user.lab7_2;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -73,6 +74,49 @@ public class MainActivity extends AppCompatActivity {
                 dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 dialog.show();
             }
-        }
+
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                int progress = 0;
+                while (progress <= 100) {
+                    try {
+                        Thread.sleep(50);
+                        publishProgress(Integer.valueOf(progress));
+                        progress++;
+                    }catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+                dialog.setProgress(values[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Boolean status) {
+                dialog.dismiss();
+                double c_tall = Double.parseDouble(tall.getText().toString());
+                double c_weight = Double.parseDouble(weigth.getText().toString());
+                double c_sweight = 0;
+                double c_fat = 0;
+
+                if (gender == 1) {
+                    c_sweight = 22 * c_tall/100 * c_tall/100;
+                    c_fat = (c_weight - (0.88 * c_weight)) / c_weight * 100;
+                }
+
+                if (gender == 2) {
+                    c_sweight = 22 * c_tall/100 * c_tall/100;
+                    c_fat = (c_weight - (0.82 * c_weight)) / c_weight * 100;
+                }
+
+                s_weigth.setText(String.format("%.2f", c_sweight));
+                fat.setText(String.format("%.2f", c_fat));
+            }
+        }.execute();
     }
 }
